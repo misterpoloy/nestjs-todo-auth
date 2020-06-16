@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TaskStatus } from "./task-status.enum";
-import { v4 as uuidv4 } from 'uuid';
+//import { TaskStatus } from "./task-status.enum";
 import { CreateTaskDto } from './dto/create-task.dto';
-import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
+//import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TaskRepository } from './task.repository';
+import { Task } from './task.entity';
 
 @Injectable()
 export class TasksService {
+
+  constructor(@InjectRepository(TaskRepository) private taskRepository : TaskRepository ){}
   // getAllTasks(): Task[] {
   //   return this.tasks;
   // }
@@ -25,11 +29,11 @@ export class TasksService {
   //   return filterTasks;
   // }
 
-  // getTaskById(id: string) : Task {
-  //   const found = this.tasks.find(task => task.id === id);
-  //   if (!found) throw new NotFoundException();
-  //   return found;
-  // }
+  async getTaskById(id: number) : Promise<Task> {
+    const found = await this.taskRepository.findOne(id);
+    if (!found) throw new NotFoundException();
+    return found;
+  }
 
   // updateTask(id: string, status: TaskStatus) {
   //   const task = this.getTaskById(id);
@@ -37,20 +41,12 @@ export class TasksService {
   //   return task;
   // }
 
-  // createTask(createTaskdto : CreateTaskDto): Task {
-  //   const { title, description } = createTaskdto;
-  //   const task : Task = {
-  //     id: uuidv4(),
-  //     title,
-  //     description,
-  //     status: TaskStatus.OPEN,
-  //   };
-  //   this.tasks.push(task);
-  //   return task;
-  // }
+  async createTask(createTaskdto : CreateTaskDto): Promise<Task> {
+    return this.taskRepository.createTask(createTaskdto);
+  }
 
-  // deleteTask(id: string) : void {
-  //   const found = this.getTaskById(id);
-  //   this.tasks = this.tasks.filter(task => task.id !== found.id);
-  // }
+  async deleteTask(id: number) : Promise<void> {
+    const result = await this.taskRepository.delete(id);
+    if (result.affected === 0) throw new NotFoundException();
+  }
 }
