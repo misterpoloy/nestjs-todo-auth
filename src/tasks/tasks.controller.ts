@@ -18,11 +18,11 @@ export class TasksController {
   //   return this.taskService.getAllTasks();
   // }
   
-  // @Post()
-  // @UsePipes(ValidationPipe)
-  // createTask(@Body() createTaskDto : CreateTaskDto): Task {
-  //   return this.taskService.createTask(createTaskDto);
-  // }
+  @Post()
+  @UsePipes(ValidationPipe)
+  createTask(@Body() createTaskDto : CreateTaskDto): Promise<Task> {
+    return this.taskService.createTask(createTaskDto);
+  }
 
   @Get('/:id')
   getTaskById(@Param('id', ParseIntPipe) id : number) : Promise<Task> {
