@@ -22,6 +22,6 @@ export class AuthController {
   @Post('/test')
   @UseGuards(AuthGuard())
   test(@GetUser() user: User) { // @Req() req
-    console.log(user);
+    //console.log(user);
   }
 }
